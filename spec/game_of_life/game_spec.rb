@@ -113,7 +113,7 @@ describe GameOfLife::Game do
                             [ 0, 1, 1, 0 ],
                             [ 1, 0, 0, 1 ],
                             [ 0, 1, 0, 1 ],
-                            [ 0, 0, 1, 0] ]
+                            [ 0, 0, 1, 0 ] ]
     end
     
     describe "automatic expansion of the grid" do

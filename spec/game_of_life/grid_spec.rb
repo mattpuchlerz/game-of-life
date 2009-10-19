@@ -1,6 +1,6 @@
 require File.join( File.dirname(__FILE__), '..', 'spec_helper' )
 
-describe GameOfLife::Grid do
+describe GameOfLife::Game do
   
   def default_cells
     [ [ 0, 0, 0 ],
@@ -12,11 +12,11 @@ describe GameOfLife::Grid do
   describe "initializing" do
     
     it "should be initialized with a seed of cells" do
-      game = GameOfLife::Grid.new default_cells
+      game = GameOfLife::Game.new default_cells
     end
   
     it "should have cells" do
-      game = GameOfLife::Grid.new default_cells
+      game = GameOfLife::Game.new default_cells
       game.cells.should == default_cells
     end
   
@@ -25,7 +25,7 @@ describe GameOfLife::Grid do
   describe "working with cells" do
     
     before :each do
-      @game = GameOfLife::Grid.new default_cells      
+      @game = GameOfLife::Game.new default_cells      
     end
     
     it "should get a cell's current status" do
@@ -69,7 +69,7 @@ describe GameOfLife::Grid do
   describe "determining a cell's new status" do
     
     before :each do
-      @game = GameOfLife::Grid.new default_cells      
+      @game = GameOfLife::Game.new default_cells      
     end
     
     it "should kill a cell that has fewer than 2 live neighbors" do
@@ -111,7 +111,7 @@ describe GameOfLife::Grid do
   describe "creating a new generation" do
     
     it "should create a new generation of cells using their new status" do
-      game = GameOfLife::Grid.new default_cells
+      game = GameOfLife::Game.new default_cells
       game.new_generation
       game.cells.should == [ [ 0, 0, 0, 0 ],
                              [ 0, 1, 1, 0 ],
@@ -123,7 +123,7 @@ describe GameOfLife::Grid do
     describe "automatic expanding of the cell grid" do
       
       it "should add a row above when 3 consecutive live cells exist in the topmost row" do
-        game = GameOfLife::Grid.new [ [ 0, 1, 1, 1, 0 ],
+        game = GameOfLife::Game.new [ [ 0, 1, 1, 1, 0 ],
                                       [ 0, 0, 0, 0, 0 ] ]
         game.new_generation
         game.cells.should ==        [ [ 0, 0, 1, 0, 0 ],
@@ -132,7 +132,7 @@ describe GameOfLife::Grid do
       end
       
       it "should add a row below when 3 consecutive live cells exist in the bottommost row" do
-        game = GameOfLife::Grid.new [ [ 0, 0, 0, 0, 0 ],
+        game = GameOfLife::Game.new [ [ 0, 0, 0, 0, 0 ],
                                       [ 0, 1, 1, 1, 0 ] ]
         game.new_generation
         game.cells.should ==        [ [ 0, 0, 1, 0, 0 ],
@@ -141,7 +141,7 @@ describe GameOfLife::Grid do
       end
       
       it "should add a row to the left when 3 consecutive live cells exist in the leftmost row" do
-        game = GameOfLife::Grid.new [ [ 0, 0 ],
+        game = GameOfLife::Game.new [ [ 0, 0 ],
                                       [ 1, 0 ],
                                       [ 1, 0 ],
                                       [ 1, 0 ],
@@ -155,7 +155,7 @@ describe GameOfLife::Grid do
       end
       
       it "should add a row to the right when 3 consecutive live cells exist in the rightmost row" do
-        game = GameOfLife::Grid.new [ [ 0, 0 ],
+        game = GameOfLife::Game.new [ [ 0, 0 ],
                                       [ 0, 1 ],
                                       [ 0, 1 ],
                                       [ 0, 1 ],
@@ -173,7 +173,7 @@ describe GameOfLife::Grid do
     describe "still lives" do
       
       after :each do
-        game = GameOfLife::Grid.new @gen1
+        game = GameOfLife::Game.new @gen1
         game.new_generation
         game.cells.should == @gen1        
       end
@@ -215,7 +215,7 @@ describe GameOfLife::Grid do
     describe "oscillators" do
       
       after :each do
-        game = GameOfLife::Grid.new @gen1
+        game = GameOfLife::Game.new @gen1
         game.new_generation
         game.cells.should == @gen2
         game.new_generation
@@ -274,7 +274,7 @@ describe GameOfLife::Grid do
       end
       
       after :each do
-        game = GameOfLife::Grid.new @generations[0]
+        game = GameOfLife::Game.new @generations[0]
         @generations.length.times do |i|
           next if i == 0
           game.new_generation

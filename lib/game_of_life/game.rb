@@ -1,5 +1,5 @@
 module GameOfLife
-  class Grid
+  class Game
     
     attr_reader :cells
     

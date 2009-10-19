@@ -40,6 +40,13 @@ module GameOfLife
       @grid[row][col] || 0 rescue 0
     end
     
+    def to_s options = {}
+      str = @grid.map { |row| row.join }.join("\n")
+      str.gsub! '1', options[:live] if options[:live]
+      str.gsub! '0', options[:dead] if options[:dead]
+      str
+    end
+    
     private
     
     def pad_grid

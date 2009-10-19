@@ -310,4 +310,24 @@ describe GameOfLife::Game do
     
   end
   
+  describe "output" do
+    
+    before :each do
+      @game = GameOfLife::Game.new default_grid
+    end
+    
+    it "should return the grid as a formatted string" do
+      @game.to_s.should == "000\n100\n110\n111"
+    end
+    
+    it "should accept an option to change the representation of a live cell" do
+      @game.to_s(:live => 'X').should == "000\nX00\nXX0\nXXX"
+    end
+    
+    it "should accept an option to change the representation of a dead cell" do
+      @game.to_s(:dead => 'X').should == "XXX\n1XX\n11X\n111"
+    end
+    
+  end
+  
 end

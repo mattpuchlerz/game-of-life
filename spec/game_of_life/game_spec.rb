@@ -11,18 +11,18 @@ describe GameOfLife::Game do
   
   describe "initializing" do
     
-    it "should be initialized with a seed of cells" do
+    it "should be initialized with a seed, which is a grid to start from" do
       game = GameOfLife::Game.new default_grid
     end
   
-    it "should have cells" do
+    it "should keep track of the grid" do
       game = GameOfLife::Game.new default_grid
       game.grid.should == default_grid
     end
   
   end
   
-  describe "working with cells" do
+  describe "working with the grid's cells" do
     
     before :each do
       @game = GameOfLife::Game.new default_grid      
@@ -64,50 +64,46 @@ describe GameOfLife::Game do
       @game.live_neighbor_count_of(2, 1).should == 5
     end
   
+    describe "determining a cell's new status" do
+
+      it "should kill a cell that has fewer than 2 live neighbors" do
+        @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 1
+        @game.new_status_of(0, 0).should == 0
+      end
+
+      it "should kill a cell that has more than 3 live neighbors" do
+        @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 4
+        @game.new_status_of(0, 0).should == 0
+      end
+
+      it "should keep a cell alive that has 2 live neighbors" do
+        @game.should_receive(:status_of).with(0, 0).and_return 1
+        @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 2
+        @game.new_status_of(0, 0).should == 1
+      end
+
+      it "should keep a cell alive that has 3 live neighbors" do
+        @game.should_receive(:status_of).with(0, 0).and_return 1
+        @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 3
+        @game.new_status_of(0, 0).should == 1
+      end
+
+      it "should resuscitate a dead cell that has 3 live neighbors" do
+        @game.should_receive(:status_of).with(0, 0).and_return 0
+        @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 3
+        @game.new_status_of(0, 0).should == 1
+      end
+
+      it "should not resuscitate a dead cell that has 2 live neighbors" do
+        @game.should_receive(:status_of).with(0, 0).and_return 0
+        @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 2
+        @game.new_status_of(0, 0).should == 0
+      end
+
+    end
+  
   end
   
-  describe "determining a cell's new status" do
-    
-    before :each do
-      @game = GameOfLife::Game.new default_grid      
-    end
-    
-    it "should kill a cell that has fewer than 2 live neighbors" do
-      @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 1
-      @game.new_status_of(0, 0).should == 0
-    end
-    
-    it "should kill a cell that has more than 3 live neighbors" do
-      @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 4
-      @game.new_status_of(0, 0).should == 0
-    end
-    
-    it "should keep a cell alive that has 2 live neighbors" do
-      @game.should_receive(:status_of).with(0, 0).and_return 1
-      @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 2
-      @game.new_status_of(0, 0).should == 1
-    end
-    
-    it "should keep a cell alive that has 3 live neighbors" do
-      @game.should_receive(:status_of).with(0, 0).and_return 1
-      @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 3
-      @game.new_status_of(0, 0).should == 1
-    end
-    
-    it "should resuscitate a dead cell that has 3 live neighbors" do
-      @game.should_receive(:status_of).with(0, 0).and_return 0
-      @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 3
-      @game.new_status_of(0, 0).should == 1
-    end
-    
-    it "should not resuscitate a dead cell that has 2 live neighbors" do
-      @game.should_receive(:status_of).with(0, 0).and_return 0
-      @game.should_receive(:live_neighbor_count_of).with(0, 0).and_return 2
-      @game.new_status_of(0, 0).should == 0
-    end
-    
-  end
-
   describe "creating a new generation" do
     
     it "should create a new generation of cells using their new status" do
@@ -120,9 +116,9 @@ describe GameOfLife::Game do
                             [ 0, 0, 1, 0] ]
     end
     
-    describe "automatic expanding of the cell grid" do
+    describe "automatic expansion of the grid" do
       
-      it "should add a row above when 3 consecutive live cells exist in the topmost row" do
+      it "should add a row on the top when the topmost row has 3 adjacent live cells" do
         game = GameOfLife::Game.new [ [ 0, 1, 1, 1, 0 ],
                                       [ 0, 0, 0, 0, 0 ] ]
         game.new_generation
@@ -131,7 +127,7 @@ describe GameOfLife::Game do
                                       [ 0, 0, 1, 0, 0 ] ]
       end
       
-      it "should add a row below when 3 consecutive live cells exist in the bottommost row" do
+      it "should add a row on the bottom when the bottommost row 3 consecutive live cells" do
         game = GameOfLife::Game.new [ [ 0, 0, 0, 0, 0 ],
                                       [ 0, 1, 1, 1, 0 ] ]
         game.new_generation
@@ -140,7 +136,7 @@ describe GameOfLife::Game do
                                       [ 0, 0, 1, 0, 0 ] ]
       end
       
-      it "should add a row to the left when 3 consecutive live cells exist in the leftmost row" do
+      it "should add a column on the left when the leftmost column has 3 adjacent live cells" do
         game = GameOfLife::Game.new [ [ 0, 0 ],
                                       [ 1, 0 ],
                                       [ 1, 0 ],
@@ -154,7 +150,7 @@ describe GameOfLife::Game do
                                       [ 0, 0, 0 ] ]
       end
       
-      it "should add a row to the right when 3 consecutive live cells exist in the rightmost row" do
+      it "should add a column on the right when the rightmost column has 3 adjacent live cells" do
         game = GameOfLife::Game.new [ [ 0, 0 ],
                                       [ 0, 1 ],
                                       [ 0, 1 ],

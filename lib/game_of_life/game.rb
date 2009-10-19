@@ -43,17 +43,30 @@ module GameOfLife
     private
     
     def pad_grid
-      top = @grid.first.join
-      @grid.unshift Array.new(@grid.first.length).fill(0) if top =~ /111/
-      
+      pad_grid_bottom
+      pad_grid_left
+      pad_grid_right
+      pad_grid_top
+    end
+    
+    def pad_grid_bottom
       bottom = @grid.last.join
       @grid << Array.new(@grid.last.length).fill(0) if bottom =~ /111/
-      
+    end  
+    
+    def pad_grid_left
       left = @grid.inject('') { |str, grid| str += grid.first.to_s } 
       @grid.each { |row| row.unshift 0 } if left =~ /111/
-      
+    end
+    
+    def pad_grid_right
       right = @grid.inject('') { |str, grid| str += grid.last.to_s } 
       @grid.each { |row| row << 0 } if right =~ /111/
+    end
+    
+    def pad_grid_top
+      top = @grid.first.join
+      @grid.unshift Array.new(@grid.first.length).fill(0) if top =~ /111/
     end
     
   end

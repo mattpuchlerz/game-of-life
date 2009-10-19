@@ -1,14 +1,14 @@
 module GameOfLife
   class Game
     
-    attr_reader :cells
+    attr_reader :grid
     
-    def initialize seed
-      @cells = seed
+    def initialize grid_seed
+      @grid = grid_seed
     end
     
     def live_neighbor_count_of row, col
-      neighbors_of(row, col).select { |c| c == 1 }.count
+      neighbors_of(row, col).select { |cell| cell == 1 }.count
     end
     
     def neighbors_of row, col
@@ -18,15 +18,15 @@ module GameOfLife
     end
     
     def new_generation
-      pad_cells
-      new_cells = []
-      @cells.each_with_index do |cols, row_id|
-        new_cells[row_id] = []
+      pad_grid
+      new_grid = []
+      @grid.each_with_index do |cols, row_id|
+        new_grid[row_id] = []
         cols.each_with_index do |col, col_id|
-          new_cells[row_id][col_id] = new_status_of row_id, col_id
+          new_grid[row_id][col_id] = new_status_of row_id, col_id
         end
       end
-      @cells = new_cells
+      @grid = new_grid
     end
     
     def new_status_of row, col
@@ -37,23 +37,23 @@ module GameOfLife
     
     def status_of row, col
       return 0 if row < 0 or col < 0
-      @cells[row][col] || 0 rescue 0
+      @grid[row][col] || 0 rescue 0
     end
     
     private
     
-    def pad_cells
-      top = @cells.first.join
-      @cells.unshift Array.new(@cells.first.length).fill(0) if top =~ /111/
+    def pad_grid
+      top = @grid.first.join
+      @grid.unshift Array.new(@grid.first.length).fill(0) if top =~ /111/
       
-      bottom = @cells.last.join
-      @cells << Array.new(@cells.last.length).fill(0) if bottom =~ /111/
+      bottom = @grid.last.join
+      @grid << Array.new(@grid.last.length).fill(0) if bottom =~ /111/
       
-      left = @cells.inject('') { |str, c| str += c.first.to_s } 
-      @cells.each { |c| c.unshift 0 } if left =~ /111/
+      left = @grid.inject('') { |str, grid| str += grid.first.to_s } 
+      @grid.each { |row| row.unshift 0 } if left =~ /111/
       
-      right = @cells.inject('') { |str, c| str += c.last.to_s } 
-      @cells.each { |c| c << 0 } if right =~ /111/
+      right = @grid.inject('') { |str, grid| str += grid.last.to_s } 
+      @grid.each { |row| row << 0 } if right =~ /111/
     end
     
   end

@@ -2,7 +2,7 @@ require File.join( File.dirname(__FILE__), '..', 'spec_helper' )
 
 describe GameOfLife::Game do
   
-  def default_cells
+  def default_grid
     [ [ 0, 0, 0 ],
       [ 1, 0, 0 ],
       [ 1, 1, 0 ],
@@ -12,12 +12,12 @@ describe GameOfLife::Game do
   describe "initializing" do
     
     it "should be initialized with a seed of cells" do
-      game = GameOfLife::Game.new default_cells
+      game = GameOfLife::Game.new default_grid
     end
   
     it "should have cells" do
-      game = GameOfLife::Game.new default_cells
-      game.cells.should == default_cells
+      game = GameOfLife::Game.new default_grid
+      game.grid.should == default_grid
     end
   
   end
@@ -25,7 +25,7 @@ describe GameOfLife::Game do
   describe "working with cells" do
     
     before :each do
-      @game = GameOfLife::Game.new default_cells      
+      @game = GameOfLife::Game.new default_grid      
     end
     
     it "should get a cell's current status" do
@@ -69,7 +69,7 @@ describe GameOfLife::Game do
   describe "determining a cell's new status" do
     
     before :each do
-      @game = GameOfLife::Game.new default_cells      
+      @game = GameOfLife::Game.new default_grid      
     end
     
     it "should kill a cell that has fewer than 2 live neighbors" do
@@ -111,13 +111,13 @@ describe GameOfLife::Game do
   describe "creating a new generation" do
     
     it "should create a new generation of cells using their new status" do
-      game = GameOfLife::Game.new default_cells
+      game = GameOfLife::Game.new default_grid
       game.new_generation
-      game.cells.should == [ [ 0, 0, 0, 0 ],
-                             [ 0, 1, 1, 0 ],
-                             [ 1, 0, 0, 1 ],
-                             [ 0, 1, 0, 1 ],
-                             [ 0, 0, 1, 0] ]
+      game.grid.should == [ [ 0, 0, 0, 0 ],
+                            [ 0, 1, 1, 0 ],
+                            [ 1, 0, 0, 1 ],
+                            [ 0, 1, 0, 1 ],
+                            [ 0, 0, 1, 0] ]
     end
     
     describe "automatic expanding of the cell grid" do
@@ -126,7 +126,7 @@ describe GameOfLife::Game do
         game = GameOfLife::Game.new [ [ 0, 1, 1, 1, 0 ],
                                       [ 0, 0, 0, 0, 0 ] ]
         game.new_generation
-        game.cells.should ==        [ [ 0, 0, 1, 0, 0 ],
+        game.grid.should ==         [ [ 0, 0, 1, 0, 0 ],
                                       [ 0, 0, 1, 0, 0 ],
                                       [ 0, 0, 1, 0, 0 ] ]
       end
@@ -135,7 +135,7 @@ describe GameOfLife::Game do
         game = GameOfLife::Game.new [ [ 0, 0, 0, 0, 0 ],
                                       [ 0, 1, 1, 1, 0 ] ]
         game.new_generation
-        game.cells.should ==        [ [ 0, 0, 1, 0, 0 ],
+        game.grid.should ==         [ [ 0, 0, 1, 0, 0 ],
                                       [ 0, 0, 1, 0, 0 ],
                                       [ 0, 0, 1, 0, 0 ] ]
       end
@@ -147,7 +147,7 @@ describe GameOfLife::Game do
                                       [ 1, 0 ],
                                       [ 0, 0 ] ]
         game.new_generation
-        game.cells.should ==        [ [ 0, 0, 0 ],
+        game.grid.should ==         [ [ 0, 0, 0 ],
                                       [ 0, 0, 0 ],
                                       [ 1, 1, 1 ],
                                       [ 0, 0, 0 ],
@@ -161,7 +161,7 @@ describe GameOfLife::Game do
                                       [ 0, 1 ],
                                       [ 0, 0 ] ]
         game.new_generation
-        game.cells.should ==        [ [ 0, 0, 0 ],
+        game.grid.should ==         [ [ 0, 0, 0 ],
                                       [ 0, 0, 0 ],
                                       [ 1, 1, 1 ],
                                       [ 0, 0, 0 ],
@@ -175,7 +175,7 @@ describe GameOfLife::Game do
       after :each do
         game = GameOfLife::Game.new @gen1
         game.new_generation
-        game.cells.should == @gen1        
+        game.grid.should == @gen1        
       end
       
       it "should maintain the 'block'" do
@@ -217,9 +217,9 @@ describe GameOfLife::Game do
       after :each do
         game = GameOfLife::Game.new @gen1
         game.new_generation
-        game.cells.should == @gen2
+        game.grid.should == @gen2
         game.new_generation
-        game.cells.should == @gen1
+        game.grid.should == @gen1
       end
       
       it "should oscillate the 'blinker'" do
@@ -278,7 +278,7 @@ describe GameOfLife::Game do
         @generations.length.times do |i|
           next if i == 0
           game.new_generation
-          game.cells.should == @generations[i]
+          game.grid.should == @generations[i]
         end
       end
       
